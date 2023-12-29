@@ -17,15 +17,15 @@ app.get("/", (req, res) => {
     })
 })
 
-app.get("/api/v1/films", (req, res) => {
+const getAllFilms = (req, res) => {
     res.status(200).json({
         status : "success",
         count : movies.length,
         data : movies
     })
-})
+}
 
-app.post("/api/v1/films", (req, res) => {
+const createFilm = (req, res) => {
     console.log(req.body);
 
     const newId = movies[movies.length - 1].id + 1
@@ -42,9 +42,9 @@ app.post("/api/v1/films", (req, res) => {
         })
     })
 
-})
+}
 
-app.get("/api/v1/films/:id", (req, res) => {
+const getFilm = (req, res) => {
     console.log(req.params);
 
     // if(req.params.id > movies.length){
@@ -68,9 +68,9 @@ app.get("/api/v1/films/:id", (req, res) => {
             movie
         }
     })
-})
+}
 
-app.patch("/api/v1/films/:id", (req, res) => {
+const updateFilm = (req, res) => {
 
     const id = req.params.id * 1
     if(id > movies.length){
@@ -94,9 +94,9 @@ app.patch("/api/v1/films/:id", (req, res) => {
     })
 
     
-})
+}
 
-app.delete("/api/v1/films/:id", (req, res) => {
+const deleteFilm = (req, res) => {
 
     const id = req.params.id * 1
     if(id > movies.length){
@@ -111,4 +111,11 @@ app.delete("/api/v1/films/:id", (req, res) => {
         message : "<movie deleted>",
         data : null
     })    
-})
+}
+
+
+app.get("/api/v1/films", getAllFilms)
+app.post("/api/v1/films", createFilm)
+app.get("/api/v1/films/:id", getFilm)
+app.patch("/api/v1/films/:id", updateFilm)
+app.delete("/api/v1/films/:id", deleteFilm)
