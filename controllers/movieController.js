@@ -9,6 +9,31 @@ exports.getAllFilms = (req, res) => {
     })
 }
 
+exports.checkID = (req, res, next, val) => {
+    const movie = movies.find(element => element.id === val*1)
+
+    if(!movie){
+        return res.status(404).json({
+            status : "fail",
+            message : "invalid id"
+        })
+    }
+    next()
+}
+
+exports.checkBody = (req, res, next) => {
+    const movie = req.body;
+
+    if(!movie.name || !movie.category){
+        return res.status(400).json({
+            status : "fail",
+            message : "invalid movie"
+        })
+    }
+
+    next()
+}
+
 exports.createFilm = (req, res) => {
     console.log(req.body);
 
@@ -37,14 +62,14 @@ exports.getFilm = (req, res) => {
     //         message : "Inavlid ID"
     //     })
     // }
-    const movie = movies.find(element => element.id === req.params.id*1);
+     const movie = movies.find(element => element.id === req.params.id*1);
 
-    if(!movie) {
-        return res.status(404).json({
-            status : "fail",
-            message : "Invalid ID"
-        })
-    }
+    // if(!movie) {
+    //     return res.status(404).json({
+    //         status : "fail",
+    //         message : "Invalid ID"
+    //     })
+    // }
 
     res.status(200).json({
         status : "success",
@@ -56,13 +81,13 @@ exports.getFilm = (req, res) => {
 
 exports.updateFilm = (req, res) => {
 
-    const id = req.params.id * 1
-    if(id > movies.length){
-        res.status(404).json({
-            status : "fail",
-            message : "InvalidID"
-        })
-    }
+    //const id = req.params.id * 1
+    // if(id > movies.length){
+    //     res.status(404).json({
+    //         status : "fail",
+    //         message : "InvalidID"
+    //     })
+    // }
 
     // const updatedFilm = req.body;
 
@@ -82,13 +107,13 @@ exports.updateFilm = (req, res) => {
 
 exports.deleteFilm = (req, res) => {
 
-    const id = req.params.id * 1
-    if(id > movies.length){
-        res.status(404).json({
-            status : "fail",
-            message : "InvalidID"
-        })
-    }
+    // const id = req.params.id * 1
+    // if(id > movies.length){
+    //     res.status(404).json({
+    //         status : "fail",
+    //         message : "InvalidID"
+    //     })
+    // }
 
     res.status(204).json({
         status : "success",
