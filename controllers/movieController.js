@@ -1,5 +1,7 @@
 const fs = require("fs")
-const movies = JSON.parse(fs.readFileSync("./moviesDB.json"))
+//const movies = JSON.parse(fs.readFileSync("./moviesDB.json"))
+
+const Movie = require("./../models/movieModel")
 
 exports.getAllFilms = (req, res) => {
     res.status(200).json({
