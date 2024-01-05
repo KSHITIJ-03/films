@@ -11,9 +11,12 @@ const router = express.Router()
 router.route("/")
     .get(movieController.getAllFilms)
     .post(movieController.createFilm)
+
 router.route("/:id")
     .get(movieController.getFilm)
     .patch(movieController.updateFilm)
     .delete(movieController.deleteFilm)
+
+router.route("/Stars/:actor").get(movieController.getMoviesByStars)
 
 module.exports = router;

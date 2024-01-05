@@ -1,10 +1,54 @@
 const fs = require("fs")
 
-const Movie = require("./../models/movieModel")
+const Movie = require("./../models/movieModel");
+
+exports.getMoviesByStars = async (req, res) => {
+    try {
+        console.log(req.params);
+        //const movie = await Movie.find({ stars: { $elemMatch: { $regex: new RegExp(req.params.actor, 'i') } } });
+
+        const movie = await Movie.find({stars : {$elemMatch : {$regex : new RegExp(req.params.actor, "i")}}}, {name : 1, _id : 0})
+        console.log(movie);
+        res.status(200).json({
+            status : "success",
+            message : movie
+        })
+    } catch(err){
+        res.status(404).json({
+            status : "fail",
+            message : err
+        })
+    }
+}
 
 exports.getAllFilms = async (req, res) => {
     try{
-        const movies = await Movie.find()
+
+        console.log(req.query);
+        
+        // const queryObj = {...req.query}
+        // const excludedQueries = ["sort", "page", "limit", "fields"]
+        // excludedQueries.forEach(el => delete queryObj[el])
+        
+        // console.log(queryObj, req.query);
+
+        // if(queryObj.genres){
+        //     console.log(queryObj.genres);
+        //     query = Movie.find({genres: {$in : req.body.genres}})
+        // }
+
+        //console.log(queryObj.genres);
+
+        //genresArray = queryObj.genres.split(",")
+
+        //console.log(genresArray);
+
+        // const movies = await Movie.find({genres: {$all : genresArray}})
+
+        const movies = await Movie.find(req.query);
+
+        //console.log(genresArray);
+        //const movies = await Movie.find(req.query)
         res.status(200).json({
             status : "success",
             count : movies.length,
@@ -52,7 +96,7 @@ exports.createFilm = async (req, res) => {
 
 exports.getFilm = async (req, res) => {
     try{
-
+        console.log(req.params)
         const movie = await Movie.findById(req.params.id)
         res.status(200).json({
             status : "success",
