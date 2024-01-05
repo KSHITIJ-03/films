@@ -12,6 +12,8 @@ router.route("/")
     .get(movieController.getAllFilms)
     .post(movieController.createFilm)
 
+router.route("/topMovies").get(movieController.topMovies, movieController.getAllFilms)
+
 router.route("/:id")
     .get(movieController.getFilm)
     .patch(movieController.updateFilm)

@@ -2,6 +2,13 @@ const fs = require("fs")
 
 const Movie = require("./../models/movieModel");
 
+exports.topMovies = (req, res, next) =>{
+    req.query.limit = "5"
+    req.query.sort = "-imdbRating"
+    req.query.fields = "name, imdbRating"
+    next()
+}
+
 exports.getMoviesByStars = async (req, res) => {
     try {
         console.log(req.params);
@@ -25,6 +32,8 @@ exports.getAllFilms = async (req, res) => {
     try{
 
         console.log(req.query);
+
+        let temp_Movies = Movie.find({})
         
         // const queryObj = {...req.query}
         // const excludedQueries = ["sort", "page", "limit", "fields"]
@@ -45,7 +54,25 @@ exports.getAllFilms = async (req, res) => {
 
         // const movies = await Movie.find({genres: {$all : genresArray}})
 
-        const movies = await Movie.find(req.query);
+        if(req.query.sort){
+            temp_Movies.sort(req.query.sort)
+        } else {
+            temp_Movies.sort("imdbRating")
+        }
+
+        if(req.query.fields){
+            const fields = req.query.fields.split(",").join(" ")
+            temp_Movies = temp_Movies.select(fields)
+        } else {
+            temp_Movies = temp_Movies.select("-__v")
+        }
+
+        const page = req.query.page*1 || 1
+        const limit = req.query.limit*1 || 100
+        const skip = (page - 1)*limit
+        temp_Movies = temp_Movies.skip(skip).limit(limit)
+
+        const movies = await temp_Movies;
 
         //console.log(genresArray);
         //const movies = await Movie.find(req.query)
