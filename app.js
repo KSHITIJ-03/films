@@ -10,8 +10,13 @@ const express = require("express")
 const morgan = require("morgan")
 const app = express()
 
+const appError = require("./utils/appError")
+
+const globalErrorController = require("./controllers/errorController")
+
 const movieRouter = require("./routes/movieRoutes")
 const userRouter = require("./routes/userRoutes")
+//const appError = require("./utils/appError")
 
 app.use(express.json())
 
@@ -29,25 +34,19 @@ app.all("*", (req, res, next) => {
     //     message : "this url "  + req.originalUrl + " not found on this server"
     // })
 
-    const err = new Error("this url "  + req.originalUrl + " not found on this server")
-    err.status = "fail",
-    err.statusCode = 404
+    // const err = new Error("this url "  + req.originalUrl + " not found on this server")
+    // err.status = "fail",
+    // err.statusCode = 404
 
-    next(err) // this err in next() shows that after this middleware it will skip all the between middlewares
-              // present in stack and execute the error middleware
+    // next(err) // this err in next() shows that after this middleware it will skip all the between middlewares
+    //           // present in stack and execute the error middleware
+
+    next(new appError("this url "  + req.originalUrl + " not found on this server", 404))
 })
 
 // global error handling middleware
 
-app.use((err, req, res, next) => {
-    err.status = err.status || "error"
-    err.statusCode = err.statusCode || 500
-
-    res.status(err.statusCode).json({
-        status : err.status,
-        message : err.message
-    })
-})
+app.use(globalErrorController.errorController)
 
 // app.get("/", (req, res) => {
 //     res.status(200).json({
