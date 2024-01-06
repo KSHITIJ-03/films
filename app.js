@@ -21,12 +21,40 @@ app.use(morgan("dev")) // third party middleware this .use makes it a middleware
 app.use("/api/v1/films", movieRouter)
 app.use("/api/v1/user", userRouter)
 
-app.get("/", (req, res) => {
-    res.status(200).json({
-        "status" : "success",
-        "message" : "from the root url"
+// if the url reaches at this line of code that means it di not entertained by any of the above routers
+
+app.all("*", (req, res, next) => {
+    // res.status(404).json({
+    //     status : "fail",
+    //     message : "this url "  + req.originalUrl + " not found on this server"
+    // })
+
+    const err = new Error("this url "  + req.originalUrl + " not found on this server")
+    err.status = "fail",
+    err.statusCode = 404
+
+    next(err) // this err in next() shows that after this middleware it will skip all the between middlewares
+              // present in stack and execute the error middleware
+})
+
+// global error handling middleware
+
+app.use((err, req, res, next) => {
+    err.status = err.status || "error"
+    err.statusCode = err.statusCode || 500
+
+    res.status(err.statusCode).json({
+        status : err.status,
+        message : err.message
     })
 })
+
+// app.get("/", (req, res) => {
+//     res.status(200).json({
+//         "status" : "success",
+//         "message" : "from the root url"
+//     })
+// })
 
 module.exports = app
 
