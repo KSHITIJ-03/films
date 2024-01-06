@@ -24,7 +24,7 @@ app.use(morgan("dev")) // third party middleware this .use makes it a middleware
 // which will have req, res, next() functions 
 
 app.use("/api/v1/films", movieRouter)
-app.use("/api/v1/user", userRouter)
+app.use("/api/v1/users", userRouter)
 
 // if the url reaches at this line of code that means it di not entertained by any of the above routers
 
