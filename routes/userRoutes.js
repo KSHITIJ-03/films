@@ -12,14 +12,18 @@ const router = express.Router()
 //     .patch(userController.updateUser)
 //     .delete(userController.deleteUser)
 
-router.route("/signup").post(authController.signup)
+router.route("/signup")
+    .post(authController.signup)
+
+router.route("/login").post(authController.login)
 
 router.route("/")
     .post(userController.createUser)
-    .get(userController.getAllUsers)
+    .get(authController.protect, userController.getAllUsers)
 
 router.route("/:id")
     .get(userController.getUser)
+    .delete(userController.deleteUser)
 
 
 module.exports = router

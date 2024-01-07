@@ -54,6 +54,21 @@ exports.getUser = async (req, res) => {
     }
 }
 
+exports.deleteUser = async (req, res) => {
+    try {
+        await User.findByIdAndDelete(req.params.id)
+        res.status(204).json({
+            status : "success",
+            message : "movie deleted"
+        })
+    } catch(err) {
+        res.status(404).json({
+            status : "fail",
+            message : err
+        })
+    }
+}
+
 
 
 
