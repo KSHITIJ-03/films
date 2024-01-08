@@ -17,13 +17,23 @@ router.route("/signup")
 
 router.route("/login").post(authController.login)
 
+router.route("/forgotPassword").post(authController.forgotPassword)
+
+//router.route("/resetPassword").post(authController.resetPassword)
+
 router.route("/")
     .post(userController.createUser)
-    .get(authController.protect, userController.getAllUsers)
+    .get(authController.protect, authController.checkUser, userController.getAllUsers)
+
+router.route("/updateMyPassword")
+    .patch(authController.protect, authController.updatePassword)
+
+router.route("/resetPassword/:token")
 
 router.route("/:id")
     .get(userController.getUser)
-    .delete(userController.deleteUser)
+    //.delete(authController.protect, authController.restrictTo("admin"), userController.deleteUser)
+    .delete(authController.protect, authController.checkUser, userController.deleteUser)
 
 
 module.exports = router

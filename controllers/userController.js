@@ -1,4 +1,5 @@
 const User = require("./../models/userModel")
+const jwt = require("jsonwebtoken")
 
 exports.createUser = async (req, res) => {
     try {
@@ -68,6 +69,7 @@ exports.deleteUser = async (req, res) => {
         })
     }
 }
+
 
 
 
