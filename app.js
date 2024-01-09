@@ -10,6 +10,13 @@ const express = require("express")
 const morgan = require("morgan")
 const app = express()
 
+const rateLimit = require("express-rate-limit")
+
+const helmet = require("helmet")
+
+const mongoSanitize = require("express-mongo-sanitize")
+const xss = require("xss-clean")
+
 const appError = require("./utils/appError")
 
 const globalErrorController = require("./controllers/errorController")
@@ -18,7 +25,26 @@ const movieRouter = require("./routes/movieRoutes")
 const userRouter = require("./routes/userRoutes")
 //const appError = require("./utils/appError")
 
+const Limiter = rateLimit({
+    max : 100,
+    windowMs : 60 * 60 * 1000,
+    message : "too many requests from this IP, please try after 1 hour"
+})
+
+app.use(mongoSanitize())
+app.use(xss())
+
+app.use(helmet())
+
+app.use("/api", Limiter)
+
 app.use(express.json())
+
+// data sanitization against NoSQL query injection
+// psoting some login which is always true exapmle :- {"$gt" : ""} in email and we only know the password, then it 
+// will automatically login
+
+// data sanitization against cross-site-scripting xss codes
 
 app.use(morgan("dev")) // third party middleware this .use makes it a middleware
 // which will have req, res, next() functions 
