@@ -1,25 +1,6 @@
 const User = require("./../models/userModel")
 const jwt = require("jsonwebtoken")
 
-exports.createUser = async (req, res) => {
-    try {
-        const user = await User.create(req.body)
-
-        res.status(201).json({
-            status : "success",
-            message : {
-                user
-            }
-        })
-
-    } catch (err) {
-        res.status(400).json({
-            status : "fail",
-            message : err
-        })
-    }
-}
-
 exports.getAllUsers = async (req, res) => {
     try {
         const users = await User.find()
@@ -61,6 +42,50 @@ exports.deleteUser = async (req, res) => {
         res.status(204).json({
             status : "success",
             message : "movie deleted"
+        })
+    } catch(err) {
+        res.status(404).json({
+            status : "fail",
+            message : err
+        })
+    }
+}
+
+exports.updateMe = async (req, res) => {
+    try {
+        console.log(req.user);
+        if(req.body.password){
+            return res.status(400).json({
+                status : "fail",
+                message : "password do not update here"
+            })
+        }
+        const user = await User.findOneAndUpdate({email : req.user.email}, {name : req.body.name}, {
+            new : true,
+            runValidators : true
+        })
+
+        console.log(user);
+
+        res.status(200).json({
+            status : "success",
+            user
+        })
+
+    } catch(err) {
+        res.status(404).json({
+            status : "fail",
+            message : err
+        })
+    }
+}
+
+exports.deleteMe = async(req, res) => {
+    try {
+        const user = await User.findByIdAndUpdate(req.user.id, {active : false})
+        res.status(204).json({
+            status : "success",
+            message : "user deleted"
         })
     } catch(err) {
         res.status(404).json({

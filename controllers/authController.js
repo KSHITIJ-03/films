@@ -1,5 +1,6 @@
 const User = require("./../models/userModel")
 const jwt = require("jsonwebtoken")
+const crypto = require("crypto")
 //const {promisify} = require("util")
 
 const sendEmail = require("./../utils/email")
@@ -19,6 +20,13 @@ exports.signup = async (req, res) => {
             expiresIn : process.env.JWT_EXPIRE
         })
 
+        res.cookie("jwt", token, {
+            expire : new Date(Date.now()+process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000), secure : true
+            // httpOnly : true this part should only be sent on production
+        })
+
+        user.password = undefined
+        
         res.status(201).json({
             status : "success",
             token,
@@ -42,11 +50,11 @@ exports.login = async (req, res, next) => {
         const password = req.body.password;
 
         if(!email || !password) {
-            res.status(400).json({
+            return res.status(400).json({
                 status : "fail",
                 message : "provide email and password"
             })
-            return next()
+            //next()
         }
 
         const user = await User.findOne({email}).select("+password")  // returns an object
@@ -67,12 +75,17 @@ exports.login = async (req, res, next) => {
         const token = jwt.sign({id : user._id}, process.env.JWT_SECRET, {
             expiresIn : process.env.JWT_EXPIRE
         })
+
+        res.cookie("jwt", token, {
+            expire : new Date(Date.now()+process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000), secure : true
+            // httpOnly : true this part should only be sent on production
+        })
+
         res.status(200).json({
             status : "success",
             token
         })
-
-
+        //next()
     } catch(err) {
         res.status(404).json({
             status : "fail",
@@ -239,6 +252,11 @@ exports.updatePassword = async (req, res, next) => {
             expiresIn : process.env.JWT_EXPIRE
         })
 
+        res.cookie("jwt", token, {
+            expire : new Date(Date.now()+process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000), secure : true
+            // httpOnly : true this part should only be sent on production
+        })
+
         return res.status(200).json({
             status : "success",
             token,
@@ -306,16 +324,52 @@ exports.forgotPassword = async(req, res, next) => {
     }
 }
 
-// exports.resetPassword = async (req, res, next) =>{
-//     try {
-//         //1 ) get the token from url
-//         //
-//     } catch(err) {
-//         res.status(404).json({
-//             status : "fail",
-//             message : err
-//         })
-//     }
-// }
+exports.resetPassword = async (req, res, next) =>{
+    try {
+        //1) get the token from url
+        const hashedToken = crypto.createHash("sha256").update(req.params.token).digest("hex")
+
+        const user = await User.findOne({
+            passwordResetToken : hashedToken, 
+            passwordResetExpire : {$gt : Date.now()}
+        })
+
+        if(!user) {
+            return res.status(400).json({
+                status : "fail",
+                message : "token is invalid or expired"
+            })
+        }
+
+        user.password = req.body.password
+        user.confirmPassword = req.body.confirmPassword
+        user.passwordResetToken = undefined
+        user.passwordResetExpire = undefined
+        await user.save()
+
+        const token = jwt.sign({id : user._id}, process.env.JWT_SECRET, {
+            expiresIn : process.env.JWT_EXPIRE
+        })
+
+        res.cookie("jwt", token, {
+            expire : new Date(Date.now()+process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000), secure : true
+            // httpOnly : true this part should only be sent on production
+        })
+
+        res.status(200).json({
+            status : "success",
+            message : "password updated",
+            token
+        })
+        //2) verify the token if it is not expired and check if user exists and set the new password
+        //3) update the passwordChange for user
+        //4) log in user and send back jwt token
+        } catch(err) {
+        res.status(404).json({
+            status : "fail",
+            message : err
+        })
+    }
+}
 
 
