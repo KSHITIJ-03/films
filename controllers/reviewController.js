@@ -3,12 +3,12 @@ const Review = require("./../models/reviewModel")
 exports.createReview = async (req, res) => {
 
     try {
-        const user = req.user
+        //const user = req.user
         const review = await Review.create({
         rating : req.body.rating,
         review : req.body.review,
         author : req.user._id,
-        movie : req.body.movie
+        movie : req.params.movieId || req.body.movie
         })
         res.status(201).json({
             status : "success",
@@ -26,7 +26,11 @@ exports.createReview = async (req, res) => {
 exports.getAllReviews = async (req, res) => {
 
     try {
-        const reviews = await Review.find()
+        let filter = {}
+        if(req.params.movieId) {
+            filter = {movie : req.params.movieId}
+        }
+        const reviews = await Review.find(filter)
         res.status(201).json({
             status : "success",
             count : reviews.length,

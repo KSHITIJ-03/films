@@ -3,11 +3,18 @@ const fs = require("fs")
 
 const movieController = require("../controllers/movieController")
 
+const reviewRouter = require("./reviewRoutes")
+
 const router = express.Router()
 
 // param middleware
 //router.param("id", movieController.checkID)
 
+/* ------------------------------------ making nested routes--------------------------------*/
+
+router.use("/:movieId/reviews", reviewRouter)
+
+/* -----------------------------------------------------------------------------------------*/
 router.route("/")
     .get(movieController.getAllFilms)
     .post(movieController.createFilm)
