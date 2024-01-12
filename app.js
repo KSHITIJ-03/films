@@ -23,6 +23,7 @@ const globalErrorController = require("./controllers/errorController")
 
 const movieRouter = require("./routes/movieRoutes")
 const userRouter = require("./routes/userRoutes")
+const reviewRouter = require("./routes/reviewRoutes")
 //const appError = require("./utils/appError")
 
 const Limiter = rateLimit({
@@ -51,6 +52,7 @@ app.use(morgan("dev")) // third party middleware this .use makes it a middleware
 
 app.use("/api/v1/films", movieRouter)
 app.use("/api/v1/users", userRouter)
+app.use("/api/v1/reviews", reviewRouter)
 
 // if the url reaches at this line of code that means it di not entertained by any of the above routers
 

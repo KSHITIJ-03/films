@@ -56,9 +56,12 @@ const movieSchema = new mongoose.Schema({
         max : [10, "rating must be between 1 to 10"],
         min : [0, "rating must be between 1 to 10"]
     },
-    reviews : {
-        type : [String]
-    },
+    // reviews : [
+    //     {
+    //         type : mongoose.Schema.Types.ObjectId,
+    //         ref : "Review"
+    //     }
+    // ],
     releaseYear : {
         type : Date,
         required : [true, "movie must have release date"]
@@ -67,6 +70,24 @@ const movieSchema = new mongoose.Schema({
     country : {
         type : String,
     }
+},
+{
+    toJSON : {virtuals : true},
+    toObject : {virtuals : true}
+})
+
+// virtual referencing :- it is done to show the child of parents without child referencing // veryImportant
+// virtual populate
+
+movieSchema.virtual("reviews", {
+    ref : "Review",
+    foreignField : "movie",
+    localField : "_id"
+})
+
+movieSchema.pre(/^find/, function(next) {
+    this.select("-reviews._id -reviews.movie")
+    next()
 })
 
 // pre hooks

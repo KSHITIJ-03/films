@@ -31,7 +31,7 @@ exports.getMoviesByStars = async (req, res) => {
 exports.getAllFilms = async (req, res) => {
     try{
 
-        console.log(req.query);
+        //console.log(req.query);
 
         let temp_Movies = Movie.find({})
         
@@ -123,8 +123,8 @@ exports.createFilm = async (req, res) => {
 
 exports.getFilm = async (req, res) => {
     try{
-        console.log(req.params)
-        const movie = await Movie.findById(req.params.id)
+        //console.log(req.params)
+        const movie = await Movie.findById(req.params.id).populate("reviews")
         res.status(200).json({
             status : "success",
             data : {

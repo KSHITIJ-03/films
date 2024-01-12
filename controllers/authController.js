@@ -58,11 +58,13 @@ exports.login = async (req, res, next) => {
         }
 
         const user = await User.findOne({email}).select("+password")  // returns an object
+        //console.log(user);
 
         const correct = await user.correctPassword(password, user.password)
+        //console.log(correct);
 
-        // console.log(user);
-        // console.log(correct);
+        //console.log(user);
+        //console.log(correct);
 
         if(!user || !correct) {
             return res.status(401).json({
