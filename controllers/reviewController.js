@@ -46,3 +46,43 @@ exports.getAllReviews = async (req, res) => {
         })
     }
 }
+
+exports.isAuthor = async(req, res, next) => {
+    try {
+
+        //console.log(req.params);
+        const review = await Review.findById(req.params.reviewId)
+
+        //console.log(review);
+
+        //console.log(review.author);
+
+        if(review.author.id != req.user._id && req.user.role != "admin"){
+            return res.status(401).json({
+                status : "fail",
+                message : "you can't delete others review"
+            })
+        }
+        next()
+    } catch(err) {
+        res.status(404).json({
+            status : "fail",
+            message : err
+        })
+    }
+}
+
+exports.deleteReview = async(req, res) => {
+    try {
+        const review = await Review.findByIdAndDelete(req.params.reviewId)
+        res.status(204).json({
+            status : "fail",
+            message : "review deleted successfully"
+        })
+    } catch(err) {
+        res.status(404).json({
+            status : "fail",
+            message : err
+        })
+    }
+}

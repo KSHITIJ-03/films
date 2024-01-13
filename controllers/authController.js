@@ -150,14 +150,13 @@ exports.protect = async (req, res, next) => {
         //     message : "signed in user"
         // })
         req.user = freshUser
-        //next()
+        next()
     } catch(err) {
         res.status(404).json({
             status : "fail",
             message : err
         })
     }
-    next()
 }
 
 exports.restrictTo = (...roles) => {

@@ -28,16 +28,16 @@ const reviewSchema = new mongoose.Schema({
     toObject : {virtuals : true}
 })
 
-reviewSchema.pre(/^find/, function(next) {
-    // this.populate({
-    //     path : "author",
-    //     select : "name"
-    // }).populate({
-    //     path : "movie",
-    //     select : "name imdbRating"
-    // })
-    next()
-})
+// reviewSchema.pre(/^find/, function(next) {
+//     // this.populate({
+//     //     path : "author",
+//     //     select : "name"
+//     // }).populate({
+//     //     path : "movie",
+//     //     select : "name imdbRating"
+//     // })
+//     next()
+// })
 
 reviewSchema.pre(/^find/, function(next) {
     this.populate({

@@ -11,4 +11,6 @@ router.route("/").post(authController.protect, reviewController.createReview)
 
 router.route("/").get(reviewController.getAllReviews)
 
+router.route("/:reviewId").delete(authController.protect, reviewController.isAuthor, reviewController.deleteReview)
+
 module.exports = router

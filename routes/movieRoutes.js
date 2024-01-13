@@ -2,6 +2,7 @@ const express = require("express")
 const fs = require("fs")
 
 const movieController = require("../controllers/movieController")
+const authController = require("../controllers/authController")
 
 const reviewRouter = require("./reviewRoutes")
 
@@ -17,7 +18,7 @@ router.use("/:movieId/reviews", reviewRouter)
 /* -----------------------------------------------------------------------------------------*/
 router.route("/")
     .get(movieController.getAllFilms)
-    .post(movieController.createFilm)
+    .post(authController.protect, authController.checkUser, movieController.createFilm)
 
 router.route("/topMovies").get(movieController.topMovies, movieController.getAllFilms)
 

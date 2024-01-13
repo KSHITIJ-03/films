@@ -1,3 +1,4 @@
+const { findById } = require("../models/movieModel")
 const User = require("./../models/userModel")
 const jwt = require("jsonwebtoken")
 
@@ -94,6 +95,35 @@ exports.deleteMe = async(req, res) => {
         })
     }
 }
+
+exports.getMe = async(req, res) => {
+    try {
+        const user = await User.findById(req.user._id)
+        res.status(200).json({
+            status : "success",
+            user
+        })
+    } catch(err) {
+        res.status(404).json({
+            status : "fail",
+            message : err
+        })
+    }
+}
+
+exports.fillMe = async(req, res, next) => {
+    try {
+        req.params.id = req.user._id
+        next()
+    } catch(err) {
+        res.status(404).json({
+            status : "fail",
+            message : err
+        })
+    }
+}
+
+
 
 
 

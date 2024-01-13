@@ -4,6 +4,9 @@ const userController = require("../controllers/userController")
 const authController = require("../controllers/authController")
 const router = express.Router()
 
+const reviewRouter = require("./reviewRoutes")
+
+
 // router.route("/")
 //     .get(userController.getAllUsers)
 //     .post(userController.createUser)
@@ -28,11 +31,14 @@ router.route("/resetPassword/:token").patch(authController.resetPassword)
 
 router.route("/deleteMe").delete(authController.protect, userController.deleteMe)
 
+//router.route("/me").get(authController.protect, userController.getMe)
+
+router.route("/me").get(authController.protect, userController.fillMe, userController.getUser)
+
 router.route("/:id")
     .get(userController.getUser)
     //.delete(authController.protect, authController.restrictTo("admin"), userController.deleteUser)
     .delete(authController.protect, authController.checkUser, userController.deleteUser)
-
 
 module.exports = router
 
